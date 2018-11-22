@@ -48,7 +48,7 @@ Stack<TType>::Stack()
 template<class TType>
 Stack<TType>::Stack(int _Size)
 {
-	if (_Size <= 0)
+	if (_Size <=0)
 		throw "size must be positive";
 	if (_Size > MAX_STACK_SIZE)
 		throw "too large size";

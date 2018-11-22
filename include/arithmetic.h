@@ -23,7 +23,7 @@ public:
 
 	bool IsOperator(char s)
 	{
-		
+
 		if (s == '+' || s == '*' || s == '-' || s == '/')
 			return true;
 		else return false;
@@ -40,28 +40,63 @@ public:
 			return -1;
 	}
 
-	
+
+
 	string ToPostfix()
 	{
 		Stack<char> opers(infix.size());
 		string tmp;
-		for (int i = 0; i < infix.size(); i++)
+		int j = 0;
+		
+		for (int i = 0; i <infix.size(); i++)
 		{
-			if (!IsOperator(infix[i])) 
-				postfix += infix[i];
-			
+			if (!IsOperator(infix[i]) && infix[i] != '(' && infix[i] != ')')
+			{
+				if (infix[i] != ' ')
+				{
+					int j = i;
+					while (!IsOperator(infix[j]) && j != infix.size() && infix[j] != ')' && infix[j] != ' ')
+					{
+						postfix += infix[j];
+						j++;
+					}
+					i = j - 1;
+					postfix += ','; //разделяю элементы запятыми
+				}
+			}
+
 			else
-				if (opers.IsEmpty() || opers.CheckTopEl() == '(')
-					opers.Push(infix[i]);
+				if (infix[i] == '-')
+				{
+					if (i == 0)
+						postfix += infix[0];
+					else
+						if (postfix[postfix.size() - 1] == '-')
+							postfix.erase(postfix.size() - 1);
+						else
+							if (infix[i - 1] == '(' || IsOperator(infix[i - 1]))
+								postfix += infix[i];
+							else
+								goto metka;
+				}
 				else
-					if (Priority(infix[i], opers.CheckTopEl()) == 1)
-						opers.Push(infix[i]);
+					metka:if (opers.IsEmpty() || opers.CheckTopEl() == '(')
+					{
+						if (infix[i] == ')')
+							opers.Pop();
+						else
+							opers.Push(infix[i]);
+					}
+					else
+						if (Priority(infix[i], opers.CheckTopEl()) == 1)
+							opers.Push(infix[i]);
 					else
 						if (Priority(infix[i], opers.CheckTopEl()) <= 0)
 						{
 							while ((!opers.IsEmpty()) && (opers.CheckTopEl() != '(' || Priority(opers.CheckTopEl(), infix[i]) != -1))
 							{
 								postfix += opers.Pop();
+								postfix += ',';
 							}
 							opers.Push(infix[i]);
 						}
@@ -72,21 +107,25 @@ public:
 								if (infix[i] == ')')
 								{
 									while (opers.CheckTopEl() != '(')
+									{
 										postfix += opers.Pop();
+										postfix += ',';
+									}
 									opers.Pop();
 								}
-
-
-
 		}
 		while (!opers.IsEmpty())
+		{
 			postfix += opers.Pop();
+			postfix += ',';
+		}
 		return postfix;
 	}
 
 	double count(double a, double b, char c)
 	{
 		double res;
+
 		if (c == '+')
 			res = a + b;
 		if (c == '-')
@@ -96,126 +135,204 @@ public:
 		if (c == '/')
 		{
 			if (b == 0) throw "impossible to divide by zero";
+			res = a / b;
 		}
-				res = a / b;
+
 		return res;
 	}
 
-	void Input(string s)
-	{
-		string tmp;
-		for (int i = 0; i < s.size(); i++)
-		{
-			if ((int(s[i]) >= 65 && int(s[i]) <= 90) || (int(s[i]) >= 97 && int(s[i]) <= 122)) //значения переменных в диапазоне
-			{
-				cout << "Введите переменную " << s[i] << ':';
-				cin >> tmp;
-			}
-		}
-	}
-
-	string NewInfix() 
-	{
-		string news,tmp;
-		for (int i = 0; i < infix.size(); i++)
-		{
-			if (isdigit(infix[i]) == 0)
-			{
-				news += infix[i];
-			}
-			else
-			{
-				while (infix[i] != ')' && infix[i] != '(' && !IsOperator(infix[i]))
-				{
-					tmp += infix[i];
-					i++;
-				}
-				double num=atof(tmp.c_str());
-				news += num;
-			}
-			
-		}
-		return news;
-	}
 
 	double Calculator()
 	{
-		Stack<char> cons;
-		string tmp;
-		Input(postfix);
-		for (int i = 0; i < infix.size(); i++)
+		double res;
+		Stack<double> nums(postfix.size());
+		vector<string> letts;
+		vector<double> values;
+
+		for (int i = 0; i < postfix.size(); i++)
 		{
-			if (!IsOperator(infix[i]) && infix[i] != ')' && infix[i] != '(')
-			while (infix[i]!='.')
+			if ((int(postfix[i]) >= 65 && int(postfix[i]) <= 90) || ((int(postfix[i]) >= 97 && int(postfix[i]) <= 122)))
+			{
+				string lett;
+				lett += postfix[i];
+				int temp = 0;
+				i++;
+				while (postfix[i] != ',')
 				{
+					lett += postfix[i];
+					i++;
+				}
+				for (int i = 0; i < letts.size(); i++)
+				{
+					if (letts[i] == lett)
+						temp++;
+				}
+				if (temp == 0)
+					letts.push_back(lett);
+				
+			}
+		}
+
+		for (int i = 0; i < letts.size(); i++)
+		{
+			int tmp;
+			cout << "Input value of variable: " << letts[i] << ':';
+			cin >> tmp;
+			values.push_back(tmp);
+		}
+
+
+		for (int i = 0; i < postfix.size(); i++)
+		{
+			if (!IsOperator(postfix[i]))
+			{
+				if ((int(postfix[i]) >= 65 && int(postfix[i]) <= 90) || ((int(postfix[i]) >= 97 && int(postfix[i]) <= 122)))
+				{
+					string lett;
+					lett += postfix[i];
+					i++;
+					while (postfix[i] != ',')
+					{
+						lett += postfix[i];
+						i++;
+					}
+					for (int i = 0; i < letts.size(); i++)
+					{
+						if (letts[i] == lett)                      
+							nums.Push(values[i]);
+					}
+					
+				}
+				else
+				{
+					string tmp;
 					tmp += postfix[i];
 					i++;
+					while (postfix[i] != ',')
+					{
+						tmp += postfix[i];
+						i++;
+					}
+					nums.Push(atof(tmp.c_str())); // atof из string в double
 				}
-				cons.Push(atof(tmp.c_str()));
-			
-			if (IsOperator(infix[i]))
-			{
-				double b = cons.Pop();
-				double c = cons.Pop();
-				double res = count(b, c, infix[i]);
-				cons.Push(res);
 			}
-		}
-		return cons.Pop();
-	}
-
-	bool Good_symb(string s) //проверка на недопустимые символы
-
-	{
-		for (int i = 0; i < s.size(); i++)
-		{
-			if ((int(s[i]) >= 65 && int(s[i]) <= 90) || (int(s[i]) >= 97 && int(s[i]) <= 122) || (isdigit(s[i])!=0) || (s[i] == ')') || (s[i] == '(') || IsOperator(s[i]) || (s[i] == '.'))
-				return true;
-			else return false;
-		}
-	}
-
-
-	bool Brackets()//проверка на расстановку скобок
-	{
-		int left = 0, right = 0;
-		for (int i = 0; i < infix.size(); i++)
-		{
-			if (infix[i] == '(')
-				left++;
-			else if (infix[i] == ')')
-				right++;
-			if (right > left)
-				throw "error in brackets";
-		}
-		if (left == right)
-			return true;
-		else return false;
-	}
-
-
-	bool Term()//проверка на колличество операндов и операций
-	{
-		int operands = 0, operations = 0;
-		for (int i = 0; i < infix.size(); i++)
-		{
-			if (infix[i] == '+' || infix[i] == '-' || infix[i] == '*' || infix[i] == '/')
-				operations++;
-			else if (!IsOperator(infix[i]))
+			else
 			{
-				while (infix[i] != '+' && infix[i] != '-'  && infix[i] != '*'  && infix[i] != '/')
+				if (postfix[i] == '-')
 				{
-					i++;
-					if (i == infix.size())
-						break;
+					if (postfix[i + 1] == ',')
+					{
+						nums.Push(count(nums.Pop(), nums.Pop(), postfix[i]));
+						i++;
+					}
+					else
+
+					if (isdigit(postfix[i+1]))
+					{
+						i++;
+						string tmp;
+						tmp += postfix[i];
+						i++;
+						while (postfix[i] != ',')
+						{
+							tmp += postfix[i];
+							i++;
+						}
+						nums.Push(-(atof(tmp.c_str())));
+					}
+					else
+						if ((int(postfix[i + 1]) >= 65 && int(postfix[i + 1]) <= 90) || ((int(postfix[i + 1]) >= 97 && int(postfix[i + 1]) <= 122)))
+						{
+							i++;
+							string lett;
+							lett += postfix[i];
+							i++;
+							while (postfix[i] != ',')
+							{
+								lett += postfix[i];
+								i++;
+							}
+							for (int i = 0; i < letts.size(); i++)
+							{
+								if (letts[i] == lett)
+									nums.Push(-(values[i]));
+							}
+						}
 				}
-				i--;
-				operands++;
+				else
+					{
+						nums.Push(count(nums.Pop(), nums.Pop(), postfix[i]));
+						i++;
+					}
+						
+				}
+			}
+		
+		return nums.CheckTopEl();
+	}
+
+	bool Error(){
+		bool res = true;
+		int l = 0;
+		Stack<char> x(infix.size());
+		int t = 0;
+		char brasc;
+		if (infix.empty())
+		{
+			res = false;
+			cout << " string is empty" << endl;
+		}
+		else
+		{
+			if ((infix[0] == '+') || (infix[0] == '*') || (infix[0] == '/') || (infix[0] == ')') || (infix[0] == ')') || (infix[0] == '.'))
+			{
+				res = false;
+				cout << "wrong begin of expression" << endl;
+			}
+			if (IsOperator(infix[infix.size() - 1]) || (infix[infix.size() - 1] == '(') || (infix[infix.size() - 1] == '.'))
+			{
+				res = false;
+				cout << "wrong end of expression" << endl;
 			}
 		}
-		if (operands == operations + 1)
-			return true;
-		else return false;
+
+		for (int i = 0; i < infix.size() - 1; i++)
+		{
+			
+			if (infix[i] == '.')
+			{
+				if (isdigit(infix[i+1]) == 0)
+					cout << "spelling error" << endl;
+			}
+			
+		}
+		for (int i = 0; i < infix.size(); i++)
+		{
+			if (!((int(infix[i]) >= 65 && int(infix[i]) <= 90) || (int(infix[i]) >= 97 && int(infix[i]) <= 122) || (isdigit(infix[i]) != 0) || (infix[i] == ')') || (infix[i] == '(') || IsOperator(infix[i]) || (infix[i] == '.')))
+			{
+				cout << "invalid symbol on " << i+1 << " position" << endl;
+				res = false;
+			}
+			
+			if (infix[i] == '(')
+				x.Push('(');
+			else
+				if (infix[i] == ')')
+				{
+					if (!(x.IsEmpty()))
+					{
+						brasc= x.Pop();
+					}
+					else
+					{
+						t++;
+					}
+				}
+		}	if (t != 0) {
+			res = false;
+			cout << "error in brackets" << endl;
+		}
+		return res;
 	}
 };
 #endif _ARITHMETIC_H_ 
