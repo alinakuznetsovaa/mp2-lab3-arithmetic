@@ -279,12 +279,12 @@ public:
 		char brasc;
 		if (infix.empty())
 		{
-			res = false;
 			cout << " string is empty" << endl;
+			return false;
 		}
 		else
 		{
-			if ((infix[0] == '+') || (infix[0] == '*') || (infix[0] == '/') || (infix[0] == ')') || (infix[0] == ')') || (infix[0] == '.'))
+			if ((infix[0] == '+') || (infix[0] == '*') || (infix[0] == '/') ||  (infix[0] == ')') || (infix[0] == '.'))
 			{
 				res = false;
 				cout << "wrong begin of expression" << endl;
@@ -296,19 +296,35 @@ public:
 			}
 		}
 
-		for (int i = 0; i < infix.size() - 1; i++)
+		for (int i = 0; i < infix.size() - 2; i++)
 		{
 			
 			if (infix[i] == '.')
 			{
-				if (isdigit(infix[i+1]) == 0)
+				if (isdigit(infix[i + 1]) == 0)
+				{
 					cout << "spelling error" << endl;
+					res = false;
+				}
 			}
 			
 		}
+		for (int i = 0; i < infix.size() - 2; i++)
+		{
+
+			if (infix[i]=='+' || infix[i] == '*' || infix[i] == '/')
+			{
+				if (infix[i+1] == '+' || infix[i+1] == '*' || infix[i+1] == '/')
+				{
+					cout << "several operations in a row" << endl;
+					res = false;
+				}
+			}
+
+		}
 		for (int i = 0; i < infix.size(); i++)
 		{
-			if (!((int(infix[i]) >= 65 && int(infix[i]) <= 90) || (int(infix[i]) >= 97 && int(infix[i]) <= 122) || (isdigit(infix[i]) != 0) || (infix[i] == ')') || (infix[i] == '(') || IsOperator(infix[i]) || (infix[i] == '.')))
+			if (!((int(infix[i]) >= 65 && int(infix[i]) <= 90) || (int(infix[i]) >= 97 && int(infix[i]) <= 122) || (isdigit(infix[i]) != 0) || (infix[i] == ')') || (infix[i] == '(') || IsOperator(infix[i]) || (infix[i] == '.') || (infix[i] == ' ')))
 			{
 				cout << "invalid symbol on " << i+1 << " position" << endl;
 				res = false;
@@ -328,7 +344,8 @@ public:
 						t++;
 					}
 				}
-		}	if (t != 0) {
+		}	
+		if (t != 0) {
 			res = false;
 			cout << "error in brackets" << endl;
 		}

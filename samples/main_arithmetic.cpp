@@ -26,6 +26,7 @@ int main()
 		{
 			string tmp;
 			cout << "Enter expression without spaces:";
+			cin.ignore();
 			getline(cin, tmp);
 			cout << tmp << endl;
 			Arithmetic x(tmp);
