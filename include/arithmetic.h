@@ -1,4 +1,4 @@
-// объявление функций и классов для вычисления арифметических выражений
+п»ї// РѕР±СЉСЏРІР»РµРЅРёРµ С„СѓРЅРєС†РёР№ Рё РєР»Р°СЃСЃРѕРІ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РІС‹СЂР°Р¶РµРЅРёР№
 #ifndef _ARITHMETIC_H_ 
 #define _ARITHMETIC_H_ 
 
@@ -61,7 +61,7 @@ public:
 						j++;
 					}
 					i = j - 1;
-					postfix += ','; //разделяю элементы запятыми
+					postfix += ','; //СЂР°Р·РґРµР»СЏСЋ СЌР»РµРјРµРЅС‚С‹ Р·Р°РїСЏС‚С‹РјРё
 				}
 			}
 
@@ -74,10 +74,7 @@ public:
 						if (postfix[postfix.size() - 1] == '-')
 							postfix.erase(postfix.size() - 1);
 						else
-							if (infix[i - 1] == '(' || IsOperator(infix[i - 1]))
-								postfix += infix[i];
-							else
-								goto metka;
+							goto metka;
 				}
 				else
 					metka:if (opers.IsEmpty() || opers.CheckTopEl() == '(')
@@ -213,7 +210,7 @@ public:
 						tmp += postfix[i];
 						i++;
 					}
-					nums.Push(atof(tmp.c_str())); // atof из string в double
+					nums.Push(atof(tmp.c_str())); // atof РёР· string РІ double
 				}
 			}
 			else
@@ -298,7 +295,7 @@ public:
 
 		for (int i = 0; i < infix.size() - 2; i++)
 		{
-			
+
 			if (infix[i] == '.')
 			{
 				if (isdigit(infix[i + 1]) == 0)
@@ -307,21 +304,44 @@ public:
 					res = false;
 				}
 			}
-			
+		}
+		for (int i = 0; i < infix.size() - 2; i++)
+			{
+
+				if (infix[i] == ')')
+				{
+					if ((isdigit(infix[i + 1]) != 0) || (int(infix[i + 1]) >= 65 && int(infix[i + 1]) <= 90) || ((int(infix[i + 1]) >= 97 && int(infix[i + 1]) <= 122)) || (infix[i + 1] == '.'))
+					{
+						cout << "spelling error" << endl;
+						res = false;
+					}
+				}
+		}
+		for (int i = 0; i < infix.size() - 2; i++)
+			{
+
+				if (infix[i] == '+' || infix[i] == '*' || infix[i] == '/')
+				{
+					if (infix[i + 1] == '+' || infix[i + 1] == '*' || infix[i + 1] == '/')
+					{
+						cout << "several operations in a row" << endl;
+						res = false;
+					}
+				}
 		}
 		for (int i = 0; i < infix.size() - 2; i++)
 		{
 
-			if (infix[i]=='+' || infix[i] == '*' || infix[i] == '/')
+			if (infix[i] == '(')
 			{
-				if (infix[i+1] == '+' || infix[i+1] == '*' || infix[i+1] == '/')
+				if ((infix[i + 1] == ')') || (infix[i + 1] == '.'))
 				{
-					cout << "several operations in a row" << endl;
+					cout << "spelling error" << endl;
 					res = false;
 				}
 			}
-
 		}
+		
 		for (int i = 0; i < infix.size(); i++)
 		{
 			if (!((int(infix[i]) >= 65 && int(infix[i]) <= 90) || (int(infix[i]) >= 97 && int(infix[i]) <= 122) || (isdigit(infix[i]) != 0) || (infix[i] == ')') || (infix[i] == '(') || IsOperator(infix[i]) || (infix[i] == '.') || (infix[i] == ' ')))

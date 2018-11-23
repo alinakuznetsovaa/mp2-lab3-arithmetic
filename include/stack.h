@@ -24,14 +24,14 @@ class Stack
 
 public:
 	Stack();
-	Stack(int Size);		//t
-	void Push(TType val);	//t
-	TType Pop();			//t
-	TType CheckTop();		//t
-	TType GetSize();		//t
-	void ClearStack();		//t
-	bool IsEmpty();			//t
-	bool IsFull();			//t
+	Stack(int Size);	
+	void Push(TType val);
+	TType Pop();			
+	TType CheckTop();		
+	TType GetSize();	
+	void ClearStack();		
+	bool IsEmpty();			
+	bool IsFull();			
 	void NewLen();
 	TType CheckTopEl();
 	~Stack();

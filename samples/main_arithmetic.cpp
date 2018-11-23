@@ -5,11 +5,6 @@
 using namespace std;
 int main()
 {
-	//Arithmetic x("())(");
-	//if (x.Error()) {
-	//	cout << x.ToPostfix() << endl;
-	//	cout << x.Calculator() << endl;
-	//}
 	
 	bool res;
 	int k;
@@ -25,7 +20,7 @@ int main()
 		case 1:
 		{
 			string tmp;
-			cout << "Enter expression without spaces:";
+			cout << "Enter expression:";
 			cin.ignore();
 			getline(cin, tmp);
 			cout << tmp << endl;
