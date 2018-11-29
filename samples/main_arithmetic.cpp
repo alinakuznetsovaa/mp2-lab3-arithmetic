@@ -2,18 +2,21 @@
 #include <iostream>
 #include "arithmetic.h"
 #include <string>
+
 using namespace std;
+
 int main()
+
 {
-	
-	bool res;
+	bool res = true;
 	int k;
 	cout << "Menu:" << endl;
 	cout << "1.Enter expression " << endl;
 	cout << "2.Exit" << endl;
-	while (true) 
+
+	while (res)
+
 	{
-		
 		cout << "Input a menu number:" << endl;
 		cin >> k;
 		switch (k) {
@@ -31,18 +34,25 @@ int main()
 				cout << x.ToPostfix() << endl;
 				cout << x.Calculator() << endl;
 			}
+
 			else
 			{
 				cout << "try again" << endl;
 			}
 			break;
 		}
+
 		case 2:
 		{
+			res = false;
 			break;
+		}
+		default:
+		{
+			cout << "wrong menu number" << endl;
+			cout << "try again" << endl;
 		}
 		}
 	}
-
 	return 0;
 }
